@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hollow — The backend for frontend developers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 24px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1040px;
+            width: 100%;
+        }
+
+        /* --- HEADER --- */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0 32px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 80px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-mark::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        nav a {
+            color: #888;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: #fff;
+        }
+
+        /* --- HERO --- */
+        .hero {
+            max-width: 720px;
+            margin-bottom: 64px;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #888;
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 32px;
+            letter-spacing: 0.2px;
+        }
+
+        .badge span {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: clamp(44px, 7vw, 72px);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+        }
+
+        h1 .accent {
+            color: #0066ff;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #888;
+            line-height: 1.7;
+            max-width: 560px;
+            font-weight: 400;
+        }
+
+        .hero p strong {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        /* --- CODE BLOCK --- */
+        .code-block {
+            background: #0a0a0a;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin: 40px 0 0;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 2;
+            overflow-x: auto;
+            max-width: 660px;
+        }
+
+        .code-line {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .code-prompt {
+            color: #444;
+            user-select: none;
+            min-width: 16px;
+        }
+
+        .code-command {
+            color: #fff;
+        }
+
+        .code-response {
+            color: #0066ff;
+        }
+
+        .code-comment {
+            color: #444;
+            font-style: italic;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 18px;
+            background: #fff;
+            animation: blink 1s step-end infinite;
+            margin-left: 4px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* --- FEATURES --- */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            margin: 80px 0 64px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .feature {
+            padding: 32px 28px;
+            background: #000;
+        }
+
+        .feature h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: -0.2px;
+        }
+
+        .feature p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* --- STATS / SOCIAL PROOF --- */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0 0 64px;
+        }
+
+        .stat {
+            padding: 24px 28px;
+            background: #000;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* --- WAITLIST --- */
+        .waitlist {
+            padding: 48px 0;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .waitlist-text h2 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .waitlist-text p {
+            color: #666;
+            font-size: 15px;
+            margin-top: 4px;
+        }
+
+        .waitlist-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .waitlist-form input {
+            padding: 10px 16px;
+            background: #0a0a0a;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            min-width: 220px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .waitlist-form input::placeholder {
+            color: #444;
+        }
+
+        .waitlist-form input:focus {
+            border-color: #0066ff;
+        }
+
+        .waitlist-form input.error {
+            border-color: #ff3333;
+        }
+
+        .waitlist-form button {
+            padding: 10px 24px;
+            background: #fff;
+            border: none;
+            border-radius: 6px;
+            color: #000;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .waitlist-form button:hover {
+            opacity: 0.8;
+        }
+
+        .waitlist-form button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .form-status {
+            font-size: 13px;
+            margin-top: 8px;
+            width: 100%;
+            min-height: 20px;
+        }
+
+        .form-status.success {
+            color: #0066ff;
+        }
+
+        .form-status.error {
+            color: #ff3333;
+        }
+
+        .success-state {
+            display: none;
+        }
+
+        .success-state.active {
+            display: block;
+        }
+
+        .waitlist-form.hidden {
+            display: none;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 32px 0 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        footer p {
+            color: #444;
+            font-size: 13px;
+        }
+
+        footer a {
+            color: #444;
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: #888;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 28px;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+                margin-bottom: 48px;
+            }
+
+            nav {
+                gap: 24px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero {
+                text-align: center;
+            }
+
+            .hero p {
+                margin: 0 auto;
+            }
+
+            .code-block {
+                font-size: 12px;
+                padding: 16px;
+                margin: 32px auto 0;
+            }
+
+            .code-line {
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+                border: 1px solid rgba(255,255,255,0.04);
+                border-radius: 10px;
+            }
+
+            .feature {
+                padding: 24px 20px;
+                border-bottom: 1px solid rgba(255,255,255,0.04);
+            }
+
+            .feature:last-child {
+                border-bottom: none;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+                border: 1px solid rgba(255,255,255,0.04);
+                border-radius: 10px;
+            }
+
+            .stat {
+                padding: 20px;
+                border-bottom: 1px solid rgba(255,255,255,0.04);
+            }
+
+            .stat:last-child {
+                border-bottom: none;
+            }
+
+            .waitlist {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 24px;
+                padding: 32px 0;
+            }
+
+            .waitlist-form {
+                flex-direction: column;
+            }
+
+            .waitlist-form input {
+                min-width: unset;
+                width: 100%;
+            }
+
+            .waitlist-form button {
+                width: 100%;
+            }
+
+            footer {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 16px;
+            }
+
+            h1 {
+                font-size: 32px;
+                letter-spacing: -1px;
+            }
+
+            .code-block {
+                font-size: 11px;
+                padding: 12px 14px;
+            }
+
+            .code-line {
+                gap: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <header>
+        <a href="/" class="logo">
+            <span class="logo-mark"></span>
+            <span class="logo-text">Hollow</span>
+        </a>
+        <nav>
+            <a href="#">Docs</a>
+            <a href="#">GitHub</a>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="badge">
+            Waitlist open · <span>Launching soon</span>
+        </div>
+        <h1>
+            The backend for<br>
+            <span class="accent">frontend developers</span>
+        </h1>
+        <p>
+            <strong>Hollow</strong> gives you a working backend in minutes.
+            Create CRUD endpoints, store data, and get a live API —
+            so you can build your app <strong>without writing server code</strong>.
+        </p>
+
+        <div class="code-block">
+            <div class="code-line">
+                <span class="code-prompt">$</span>
+                <span class="code-command">curl https://hollow.dev/project_abc/users</span>
+            </div>
+            <div class="code-line">
+                <span class="code-prompt">→</span>
+                <span class="code-response">{ "items": [{ "name": "Alice" }], "total": 1 }</span>
+            </div>
+            <div class="code-line" style="margin-top: 8px;">
+                <span class="code-comment">// POST, PUT, DELETE all work. Data persists.</span>
+                <span class="cursor"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <div class="features">
+        <div class="feature">
+            <h3>Instant Setup</h3>
+            <p>Define your endpoints and schema in seconds. No config files, no servers to manage.</p>
+        </div>
+        <div class="feature">
+            <h3>Full CRUD</h3>
+            <p>GET, POST, PUT, DELETE. Store and retrieve data immediately. No backend code required.</p>
+        </div>
+        <div class="feature">
+            <h3>Built for Frontend</h3>
+            <p>No need to learn Express, databases, or deployment. Just build your app.</p>
+        </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Lines of backend code</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">5</div>
+            <div class="stat-label">Minutes to get your first endpoint</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Focus on your frontend</div>
+        </div>
+    </div>
+
+    <!-- WAITLIST -->
+    <section class="waitlist">
+        <div class="waitlist-text">
+            <h2>Get early access</h2>
+            <p>Be the first to use Hollow. No spam. Just a working backend.</p>
+        </div>
+
+        <div id="successState" class="success-state">
+            <p style="color: #0066ff; font-weight: 500;">✓ You're on the list.</p>
+            <p style="color: #666; font-size: 14px;">We'll let you know when Hollow is ready.</p>
+        </div>
+
+        <div id="waitlistForm" class="waitlist-form">
+            <input 
+                type="email" 
+                id="emailInput" 
+                placeholder="you@example.com"
+                autocomplete="email"
+            >
+            <button type="submit" id="submitBtn">Notify me</button>
+            <div id="formStatus" class="form-status"></div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 Hollow</p>
+        <div class="footer-links">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="mailto:hello@hollow.dev">Contact</a>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    (function() {
+        const form = document.getElementById('waitlistForm');
+        const emailInput = document.getElementById('emailInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const formStatus = document.getElementById('formStatus');
+        const successState = document.getElementById('successState');
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function setStatus(message, type) {
+            formStatus.textContent = message;
+            formStatus.className = 'form-status ' + type;
+        }
+
+        function clearStatus() {
+            formStatus.textContent = '';
+            formStatus.className = 'form-status';
+        }
+
+        function showSuccess() {
+            form.classList.add('hidden');
+            successState.classList.add('active');
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            clearStatus();
+
+            const email = emailInput.value.trim();
+
+            if (!email || !isValidEmail(email)) {
+                setStatus('Please enter a valid email address.', 'error');
+                emailInput.classList.add('error');
+                return;
+            }
+
+            emailInput.classList.remove('error');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+
+            try {
+                // Replace with your backend endpoint
+                // await fetch('/api/waitlist', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ email })
+                // });
+
+                // Demo: store in localStorage
+                const waitlist = JSON.parse(localStorage.getItem('hollow_waitlist') || '[]');
+                if (!waitlist.includes(email)) {
+                    waitlist.push(email);
+                    localStorage.setItem('hollow_waitlist', JSON.stringify(waitlist));
+                }
+
+                await new Promise(r => setTimeout(r, 500));
+                showSuccess();
+
+            } catch (err) {
+                setStatus('Something went wrong. Please try again.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Notify me';
+            }
+        }
+
+        form.addEventListener('submit', handleSubmit);
+
+        emailInput.addEventListener('input', function() {
+            this.classList.remove('error');
+            clearStatus();
+        });
+    })();
+</script>
+
+</body>
+</html>
