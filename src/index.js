@@ -35,6 +35,12 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+app.use('/dashboard/assets', express.static(join(__dirname, 'dashboard/assets')));
+
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end();
+});
+
 app.use(express.static(join(__dirname, 'dashboard')));
 
 // --- Health Check ---
