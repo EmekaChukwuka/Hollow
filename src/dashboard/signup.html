@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hollow — Sign Up</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/auth.css">
+</head>
+<body>
+    <div id="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo">
+                    <span class="logo-mark"></span>
+                    <span class="logo-text">Hollow</span>
+                </div>
+                <h1>Create your account</h1>
+                <p>Start building backends in minutes</p>
+            </div>
+
+            <form id="signup-form" class="auth-form" novalidate>
+                <div class="form-group">
+                    <label for="signup-name">Name <span class="optional">(optional)</span></label>
+                    <input 
+                        type="text" 
+                        id="signup-name" 
+                        placeholder="Your name"
+                        autocomplete="name"
+                    >
+                    <div class="error-message" id="signup-name-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input 
+                        type="email" 
+                        id="signup-email" 
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                        required
+                    >
+                    <div class="error-message" id="signup-email-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input 
+                        type="password" 
+                        id="signup-password" 
+                        placeholder="Min 6 characters"
+                        autocomplete="new-password"
+                        required
+                        minlength="6"
+                    >
+                    <div class="password-hint" id="password-hint">Must be at least 6 characters</div>
+                    <div class="error-message" id="signup-password-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-confirm">Confirm Password</label>
+                    <input 
+                        type="password" 
+                        id="signup-confirm" 
+                        placeholder="Confirm your password"
+                        autocomplete="new-password"
+                        required
+                    >
+                    <div class="error-message" id="signup-confirm-error"></div>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="signup-terms" required>
+                        I agree to the <a href="#" target="_blank">Terms of Service</a>
+                    </label>
+                    <div class="error-message" id="signup-terms-error"></div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="signup-btn">
+                    Create Account
+                </button>
+
+                <div id="signup-error" class="form-error"></div>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="login.html">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./js/utils.js"></script>
+    <script type="module" src="./js/auth.js"></script>
+</body>
+</html>

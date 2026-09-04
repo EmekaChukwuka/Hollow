@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hollow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/auth.css">
+    <link rel="stylesheet" href="./css/dashboard.css">
+</head>
+<body>
+    <div id="app"></div>
+
+    <script type="module">
+        import { getAuthToken } from './js/utils.js';
+
+        // Check if user is logged in
+        const token = getAuthToken();
+        
+        // Try to verify token
+        if (token) {
+            try {
+                const response = await fetch('/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    // User is authenticated, show dashboard
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+            } catch (_) {
+                // Token invalid, show login
+                localStorage.removeItem('hollow_token');
+            }
+        }
+
+        // Not logged in, show login
+        window.location.href = 'login.html';
+    </script>
+</body>
+</html>
