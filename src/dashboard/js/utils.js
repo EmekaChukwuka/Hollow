@@ -2,7 +2,7 @@
 // API CLIENT
 // ============================================
 
-const API_BASE = '/api';
+const API_BASE = 'https://hollow-3mbn.onrender.com/api';
 let authToken = null;
 
 export function setAuthToken(token) {

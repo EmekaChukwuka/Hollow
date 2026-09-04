@@ -199,10 +199,10 @@ if (projectForm) {
 
         try {
             if (state.editingProject) {
-                await api('PUT', `/projects/${state.editingProject}`, { name, description });
+                await api('PUT', `https://hollow-3mbn.onrender.com/projects/${state.editingProject}`, { name, description });
                 showToast('Project updated', 'success');
             } else {
-                const result = await api('POST', '/projects', { name, description });
+                const result = await api('POST', 'https://hollow-3mbn.onrender.com/projects', { name, description });
                 state.projects.push(result.data);
                 showToast('Project created', 'success');
             }
@@ -250,7 +250,7 @@ if (confirmConfirm) {
 // ============================================
 async function loadProjects() {
     try {
-        const result = await api('GET', '/projects');
+        const result = await api('GET', 'https://hollow-3mbn.onrender.com/projects');
         state.projects = result.data || [];
         return state.projects;
     } catch (error) {
@@ -315,7 +315,7 @@ function renderProjects() {
 
 async function createProject(name, description) {
     try {
-        const result = await api('POST', '/projects', { name, description });
+        const result = await api('POST', 'https://hollow-3mbn.onrender.com/projects', { name, description });
         state.projects.push(result.data);
         showToast('Project created successfully!', 'success');
         renderProjects();
@@ -328,7 +328,7 @@ async function createProject(name, description) {
 
 async function deleteProject(id) {
     try {
-        await api('DELETE', `/projects/${id}`);
+        await api('DELETE', `https://hollow-3mbn.onrender.com/projects/${id}`);
         state.projects = state.projects.filter(p => p._id !== id);
         showToast('Project deleted', 'success');
         renderProjects();
@@ -342,7 +342,7 @@ async function deleteProject(id) {
 // ============================================
 async function loadEndpoints(projectId) {
     try {
-        const result = await api('GET', `/projects/${projectId}/endpoints`);
+        const result = await api('GET', `https://hollow-3mbn.onrender.com/projects/${projectId}/endpoints`);
         state.endpoints = result.data || [];
         return state.endpoints;
     } catch (error) {
@@ -353,7 +353,7 @@ async function loadEndpoints(projectId) {
 
 async function renderProjectDetail(projectId) {
     try {
-        const result = await api('GET', `/projects/${projectId}`);
+        const result = await api('GET', `https://hollow-3mbn.onrender.com/projects/${projectId}`);
         state.currentProject = result.data;
 
         await loadEndpoints(projectId);
@@ -436,7 +436,7 @@ async function renderProjectDetail(projectId) {
             regenerateBtn.addEventListener('click', async () => {
                 if (!confirm('Regenerate API key? This will invalidate the current key.')) return;
                 try {
-                    const result = await api('POST', `/projects/${projectId}/regenerate-key`);
+                    const result = await api('POST', `https://hollow-3mbn.onrender.com/projects/${projectId}/regenerate-key`);
                     showToast('API key regenerated', 'success');
                     renderProjectDetail(projectId);
                 } catch (error) {
@@ -481,7 +481,7 @@ async function renderProjectDetail(projectId) {
 
 async function deleteEndpoint(projectId, endpointId) {
     try {
-        await api('DELETE', `/projects/${projectId}/endpoints/${endpointId}`);
+        await api('DELETE', `https://hollow-3mbn.onrender.com/projects/${projectId}/endpoints/${endpointId}`);
         showToast('Endpoint deleted', 'success');
         renderProjectDetail(projectId);
     } catch (error) {
@@ -590,10 +590,10 @@ function renderEndpointEditor(projectId, endpointId = null) {
 
                 let result;
                 if (isEditing) {
-                    result = await api('PUT', `/projects/${projectId}/endpoints/${endpointId}`, data);
+                    result = await api('PUT', `https://hollow-3mbn.onrender.com/projects/${projectId}/endpoints/${endpointId}`, data);
                     showToast('Endpoint updated', 'success');
                 } else {
-                    result = await api('POST', `/projects/${projectId}/endpoints`, data);
+                    result = await api('POST', `https://hollow-3mbn.onrender.com/projects/${projectId}/endpoints`, data);
                     showToast('Endpoint created', 'success');
                 }
 
@@ -660,7 +660,7 @@ document.querySelectorAll('.nav-item[data-view]').forEach(item => {
         } else if (view === 'profile') {
             showView('profile');
             // Load user data
-            api('GET', '/auth/me').then(result => {
+            api('GET', 'https://hollow-3mbn.onrender.com/auth/me').then(result => {
                 if (result.success) renderProfile(result.data);
             }).catch(() => {
                 showToast('Failed to load profile', 'error');
@@ -731,12 +731,12 @@ if (deleteProjectBtn) {
 if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
         try {
-            await api('POST', '/auth/logout');
+            await api('POST', 'https://hollow-3mbn.onrender.com/auth/logout');
         } catch (_) {}
         removeAuthToken();
         showToast('Logged out', 'info');
         setTimeout(() => {
-            window.location.href = '/dashboard/login.html';
+            window.location.href = '../login.html';
         }, 500);
     });
 }
@@ -803,12 +803,12 @@ async function initDashboard() {
         const token = getAuthToken();
         if (!token) {
             showToast('Please log in', 'error');
-            window.location.href = '/dashboard/login.html';
+            window.location.href = '../login.html';
             return;
         }
 
         // Get user
-        const userResult = await api('GET', '/auth/me');
+        const userResult = await api('GET', 'https://hollow-3mbn.onrender.com/auth/me');
         if (userResult.success) {
             if (userEmail) userEmail.textContent = userResult.data.email;
             renderProfile(userResult.data);
@@ -823,7 +823,7 @@ async function initDashboard() {
     } catch (error) {
         if (error.message.includes('Session expired')) {
             removeAuthToken();
-            window.location.href = '/dashboard/login.html';
+            window.location.href = '../login.html';
         } else {
             showToast('Failed to load dashboard: ' + error.message, 'error');
         }

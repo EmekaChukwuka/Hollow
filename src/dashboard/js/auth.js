@@ -84,11 +84,11 @@ if (loginForm) {
         loginBtn.textContent = '';
 
         try {
-            const result = await api('POST', '/auth/login', { email, password });
+            const result = await api('POST', 'https://hollow-3mbn.onrender.com/auth/login', { email, password });
 
             if (result.success && result.data.token) {
                 setAuthToken(result.data.token);
-                window.location.href = '/dashboard/dashboard.html';
+                window.location.href = '../dashboard.html';
             } else {
                 loginError.textContent = 'Login failed. Please try again.';
             }
@@ -160,7 +160,7 @@ if (signupForm) {
         signupBtn.textContent = '';
 
         try {
-            const result = await api('POST', '/auth/signup', {
+            const result = await api('POST', 'https://hollow-3mbn.onrender.com/auth/signup', {
                 name: name || undefined,
                 email,
                 password
@@ -168,7 +168,7 @@ if (signupForm) {
 
             if (result.success && result.data.token) {
                 setAuthToken(result.data.token);
-                window.location.href = '/dashboard/dashboard.html';
+                window.location.href = '../dashboard.html';
             } else {
                 signupError.textContent = 'Signup failed. Please try again.';
             }
