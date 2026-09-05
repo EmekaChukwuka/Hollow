@@ -1,3 +1,4 @@
+// src/routes/publicRoutes.js
 import { Router } from 'express';
 import { ProjectService } from '../services/projectService.js';
 import { EndpointService } from '../services/endpointService.js';
@@ -12,6 +13,11 @@ router.all('/*', async (req, res, next) => {
   const startTime = Date.now();
 
   try {
+    // 🔥 SAFETY: Skip API and auth routes (shouldn't reach here if order is correct)
+    if (req.path.startsWith('/api/') || req.path.startsWith('/auth/')) {
+      return res.status(404).json({ error: 'API endpoint not found' });
+    }
+
     // Extract projectId from URL
     const pathParts = req.path.split('/').filter(Boolean);
     if (pathParts.length === 0) {
@@ -96,11 +102,10 @@ async function handleStatic(req, res, endpoint) {
 // Handle dynamic mode
 async function handleDynamic(req, res, endpoint, params, projectId) {
   const endpointId = endpoint._id.toString();
-  const pathSegments = req.path.split('/').filter(Boolean).slice(1); // Remove projectId
+  const pathSegments = req.path.split('/').filter(Boolean).slice(1);
   const hasId = pathSegments.length > 1;
   const id = hasId ? pathSegments[pathSegments.length - 1] : null;
 
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-Key');
@@ -110,31 +115,27 @@ async function handleDynamic(req, res, endpoint, params, projectId) {
   switch (req.method) {
     case 'GET':
       if (id) {
-        // GET /{projectId}/{path}/:id
         result = await DataService.findOne(projectId, endpointId, null, id);
         if (!result) {
           throw new AppError('Item not found', 404);
         }
         return res.json(result);
       } else {
-        // GET /{projectId}/{path}
         const query = req.query;
         result = await DataService.findAll(projectId, endpointId, null, query);
         return res.json(result);
       }
 
     case 'POST':
-      // POST /{projectId}/{path}
       result = await DataService.create(
         projectId,
         endpointId,
-        null,  // No userId for public requests
+        null,
         req.body
       );
       return res.status(201).json(result);
 
     case 'PUT':
-      // PUT /{projectId}/{path}/:id
       if (!id) {
         throw new AppError('ID required for update', 400);
       }
@@ -151,11 +152,9 @@ async function handleDynamic(req, res, endpoint, params, projectId) {
       return res.json(result);
 
     case 'PATCH':
-      // PATCH /{projectId}/{path}/:id
       if (!id) {
         throw new AppError('ID required for update', 400);
       }
-      // Get existing first
       const existing = await DataService.findOne(projectId, endpointId, null, id);
       if (!existing) {
         throw new AppError('Item not found', 404);
@@ -171,7 +170,6 @@ async function handleDynamic(req, res, endpoint, params, projectId) {
       return res.json(result);
 
     case 'DELETE':
-      // DELETE /{projectId}/{path}/:id
       if (!id) {
         throw new AppError('ID required for delete', 400);
       }

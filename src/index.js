@@ -1,11 +1,14 @@
+// src/index.js
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import { env } from './config/env.js';
 import { connectToDatabase, createIndexes, getDb } from './config/database.js';
 import { constants } from './config/constants.js';
 
-// Route imports (we'll create these next)
+// Route imports
 import { authRoutes } from './routes/authRoutes.js';
 import { projectRoutes } from './routes/projectRoutes.js';
 import { endpointRoutes } from './routes/endpointRoutes.js';
@@ -16,6 +19,9 @@ import { publicRoutes } from './routes/publicRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { corsMiddleware } from './middleware/cors.js';
 import { requestLogger } from './middleware/logger.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 
@@ -29,19 +35,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
 
 // --- Static Files ---
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+app.use(express.static(join(__dirname, 'dashboard')));
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-app.use('/dashboard/assets', express.static(join(__dirname, 'dashboard/assets')));
-
+// --- Favicon ---
 app.get('/favicon.ico', (req, res) => {
   res.status(204).end();
 });
-
-app.use(express.static(join(__dirname, 'dashboard')));
 
 // --- Health Check ---
 app.get('/health', (req, res) => {
@@ -65,16 +64,20 @@ app.get('/', (req, res) => {
   });
 });
 
+// ============================================
+// 🔥 IMPORTANT: API Routes MUST come BEFORE publicRoutes
+// ============================================
+
 // --- API Routes ---
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/projects/:projectId/endpoints', endpointRoutes);
 app.use('/api/projects/:projectId/endpoints/:endpointId/data', dataRoutes);
 
-// --- Public API Router (must be last) ---
+// --- Public API Router (catch-all - MUST be LAST) ---
 app.use('/', publicRoutes);
 
-// --- Error Handler (must be last) ---
+// --- Error Handler (MUST be last) ---
 app.use(errorHandler);
 
 // --- Start Server ---

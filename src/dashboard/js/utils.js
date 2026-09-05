@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://hollow-3mbn.onrender.com'; 
+const API_BASE_URL = 'https://hollow-3mbn.onrender.com/api'; 
 
 let authToken = null;
 
