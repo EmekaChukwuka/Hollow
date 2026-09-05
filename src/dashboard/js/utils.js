@@ -1,13 +1,4 @@
-// src/dashboard/js/utils.js
-
-// ============================================
-// API CLIENT
-// ============================================
-
-// 🔥 FIX: Use environment variable or hardcode your backend URL
-// For production, set this to your Render backend URL
-// For development, use localhost
-const API_BASE_URL = 'https://hollow-3mbn.onrender.com'; // ← REPLACE WITH YOUR BACKEND URL
+const API_BASE_URL = 'https://hollow-3mbn.onrender.com'; 
 
 let authToken = null;
 
