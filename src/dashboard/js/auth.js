@@ -84,7 +84,8 @@ if (loginForm) {
         loginBtn.textContent = '';
 
         try {
-            const result = await api('POST', 'https://hollow-3mbn.onrender.com/auth/login', { email, password });
+            // ✅ Use relative path - utils.js will add the full URL
+            const result = await api('POST', '/auth/login', { email, password });
 
             if (result.success && result.data.token) {
                 setAuthToken(result.data.token);
@@ -160,7 +161,8 @@ if (signupForm) {
         signupBtn.textContent = '';
 
         try {
-            const result = await api('POST', 'https://hollow-3mbn.onrender.com/auth/signup', {
+            // ✅ Use relative path - utils.js will add the full URL
+            const result = await api('POST', '/auth/signup', {
                 name: name || undefined,
                 email,
                 password

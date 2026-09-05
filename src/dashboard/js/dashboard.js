@@ -199,10 +199,12 @@ if (projectForm) {
 
         try {
             if (state.editingProject) {
-                await api('PUT', `https://hollow-3mbn.onrender.com/projects/${state.editingProject}`, { name, description });
+                // ✅ FIXED: Use relative path
+                await api('PUT', `/projects/${state.editingProject}`, { name, description });
                 showToast('Project updated', 'success');
             } else {
-                const result = await api('POST', 'https://hollow-3mbn.onrender.com/projects', { name, description });
+                // ✅ FIXED: Use relative path
+                const result = await api('POST', '/projects', { name, description });
                 state.projects.push(result.data);
                 showToast('Project created', 'success');
             }
@@ -250,7 +252,8 @@ if (confirmConfirm) {
 // ============================================
 async function loadProjects() {
     try {
-        const result = await api('GET', 'https://hollow-3mbn.onrender.com/projects');
+        // ✅ FIXED: Use relative path
+        const result = await api('GET', '/projects');
         state.projects = result.data || [];
         return state.projects;
     } catch (error) {
@@ -315,7 +318,8 @@ function renderProjects() {
 
 async function createProject(name, description) {
     try {
-        const result = await api('POST', 'https://hollow-3mbn.onrender.com/projects', { name, description });
+        // ✅ FIXED: Use relative path
+        const result = await api('POST', '/projects', { name, description });
         state.projects.push(result.data);
         showToast('Project created successfully!', 'success');
         renderProjects();
@@ -328,7 +332,8 @@ async function createProject(name, description) {
 
 async function deleteProject(id) {
     try {
-        await api('DELETE', `https://hollow-3mbn.onrender.com/projects/${id}`);
+        // ✅ FIXED: Use relative path
+        await api('DELETE', `/projects/${id}`);
         state.projects = state.projects.filter(p => p._id !== id);
         showToast('Project deleted', 'success');
         renderProjects();
@@ -342,7 +347,8 @@ async function deleteProject(id) {
 // ============================================
 async function loadEndpoints(projectId) {
     try {
-        const result = await api('GET', `https://hollow-3mbn.onrender.com/projects/${projectId}/endpoints`);
+        // ✅ FIXED: Use relative path
+        const result = await api('GET', `/projects/${projectId}/endpoints`);
         state.endpoints = result.data || [];
         return state.endpoints;
     } catch (error) {
@@ -353,7 +359,8 @@ async function loadEndpoints(projectId) {
 
 async function renderProjectDetail(projectId) {
     try {
-        const result = await api('GET', `https://hollow-3mbn.onrender.com/projects/${projectId}`);
+        // ✅ FIXED: Use relative path
+        const result = await api('GET', `/projects/${projectId}`);
         state.currentProject = result.data;
 
         await loadEndpoints(projectId);
@@ -436,7 +443,8 @@ async function renderProjectDetail(projectId) {
             regenerateBtn.addEventListener('click', async () => {
                 if (!confirm('Regenerate API key? This will invalidate the current key.')) return;
                 try {
-                    const result = await api('POST', `https://hollow-3mbn.onrender.com/projects/${projectId}/regenerate-key`);
+                    // ✅ FIXED: Use relative path
+                    const result = await api('POST', `/projects/${projectId}/regenerate-key`);
                     showToast('API key regenerated', 'success');
                     renderProjectDetail(projectId);
                 } catch (error) {
@@ -449,6 +457,7 @@ async function renderProjectDetail(projectId) {
         if (requireApiKeyCheckbox) {
             requireApiKeyCheckbox.addEventListener('change', async (e) => {
                 try {
+                    // ✅ FIXED: Use relative path
                     await api('PUT', `/projects/${projectId}`, { requireApiKey: e.target.checked });
                     showToast(`API key requirement ${e.target.checked ? 'enabled' : 'disabled'}`, 'success');
                 } catch (error) {
@@ -481,7 +490,8 @@ async function renderProjectDetail(projectId) {
 
 async function deleteEndpoint(projectId, endpointId) {
     try {
-        await api('DELETE', `https://hollow-3mbn.onrender.com/projects/${projectId}/endpoints/${endpointId}`);
+        // ✅ FIXED: Use relative path
+        await api('DELETE', `/projects/${projectId}/endpoints/${endpointId}`);
         showToast('Endpoint deleted', 'success');
         renderProjectDetail(projectId);
     } catch (error) {
@@ -590,10 +600,12 @@ function renderEndpointEditor(projectId, endpointId = null) {
 
                 let result;
                 if (isEditing) {
-                    result = await api('PUT', `https://hollow-3mbn.onrender.com/projects/${projectId}/endpoints/${endpointId}`, data);
+                    // ✅ FIXED: Use relative path
+                    result = await api('PUT', `/projects/${projectId}/endpoints/${endpointId}`, data);
                     showToast('Endpoint updated', 'success');
                 } else {
-                    result = await api('POST', `https://hollow-3mbn.onrender.com/projects/${projectId}/endpoints`, data);
+                    // ✅ FIXED: Use relative path
+                    result = await api('POST', `/projects/${projectId}/endpoints`, data);
                     showToast('Endpoint created', 'success');
                 }
 
@@ -660,7 +672,8 @@ document.querySelectorAll('.nav-item[data-view]').forEach(item => {
         } else if (view === 'profile') {
             showView('profile');
             // Load user data
-            api('GET', 'https://hollow-3mbn.onrender.com/auth/me').then(result => {
+            // ✅ FIXED: Use relative path
+            api('GET', '/auth/me').then(result => {
                 if (result.success) renderProfile(result.data);
             }).catch(() => {
                 showToast('Failed to load profile', 'error');
@@ -731,7 +744,8 @@ if (deleteProjectBtn) {
 if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
         try {
-            await api('POST', 'https://hollow-3mbn.onrender.com/auth/logout');
+            // ✅ FIXED: Use relative path
+            await api('POST', '/auth/logout');
         } catch (_) {}
         removeAuthToken();
         showToast('Logged out', 'info');
@@ -808,7 +822,8 @@ async function initDashboard() {
         }
 
         // Get user
-        const userResult = await api('GET', 'https://hollow-3mbn.onrender.com/auth/me');
+        // ✅ FIXED: Use relative path
+        const userResult = await api('GET', '/auth/me');
         if (userResult.success) {
             if (userEmail) userEmail.textContent = userResult.data.email;
             renderProfile(userResult.data);

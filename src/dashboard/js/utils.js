@@ -1,8 +1,14 @@
+// src/dashboard/js/utils.js
+
 // ============================================
 // API CLIENT
 // ============================================
 
-const API_BASE = 'https://hollow-3mbn.onrender.com/api';
+// 🔥 FIX: Use environment variable or hardcode your backend URL
+// For production, set this to your Render backend URL
+// For development, use localhost
+const API_BASE_URL = 'https://your-backend.onrender.com'; // ← REPLACE WITH YOUR BACKEND URL
+
 let authToken = null;
 
 export function setAuthToken(token) {
@@ -43,12 +49,13 @@ export async function api(method, path, data = null) {
     };
 
     try {
-        const response = await fetch(`${API_BASE}${path}`, options);
+        // 🔥 FIX: Construct full URL using API_BASE_URL
+        const url = `${API_BASE_URL}${path}`;
+        const response = await fetch(url, options);
 
         // Handle 401 Unauthorized
         if (response.status === 401) {
             removeAuthToken();
-            // Don't redirect automatically, let the auth page handle it
             throw new Error('Session expired. Please log in again.');
         }
 
