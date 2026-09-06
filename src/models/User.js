@@ -25,13 +25,22 @@ export const UserModel = {
     const result = await collection.insertOne(user);
     return { ...user, _id: result.insertedId };
   },
+async findByEmail(email) {
+  const collection = this.getCollection();
 
-  async findByEmail(email) {
-    const collection = this.getCollection();
-    return await collection.findOne({
-      email: email.toLowerCase().trim()
-    });
-  },
+  console.log('🔎 Searching users collection');
+  console.log('📧 Email:', email.toLowerCase().trim());
+  console.log('📁 Collection:', collection.collectionName);
+  console.log('🗄️ Database:', collection.dbName);
+
+  const user = await collection.findOne({
+    email: email.toLowerCase().trim()
+  });
+
+  console.log('👤 Found user:', user);
+
+  return user;
+},
 
   async findById(id) {
     const collection = this.getCollection();
