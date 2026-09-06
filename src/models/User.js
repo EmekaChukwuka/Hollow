@@ -1,9 +1,16 @@
+// src/models/User.js
 import { ObjectId } from 'mongodb';
 import { getDb } from '../config/database.js';
 
 const COLLECTION = 'users';
 
 export const UserModel = {
+  
+  getCollection() {
+    const db = getDb();
+    return db.collection(COLLECTION);
+  },
+
   async create(userData) {
     const collection = this.getCollection();
     const now = new Date();
