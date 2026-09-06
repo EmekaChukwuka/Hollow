@@ -19,8 +19,9 @@ router.post('/signup', async (req, res, next) => {
     const result = await AuthService.signup(email, password, name);
 
     res.status(201).json({
-      success: true,
-      data: result
+      status: 'success',
+      token: result.token,
+      user: result.user
     });
   } catch (error) {
     next(error);
@@ -39,8 +40,9 @@ router.post('/login', async (req, res, next) => {
     const result = await AuthService.login(email, password);
 
     res.json({
-      success: true,
-      data: result
+      status: 'success',
+      token: result.token,
+      user: result.user
     });
   } catch (error) {
     next(error);
@@ -51,9 +53,12 @@ router.post('/login', async (req, res, next) => {
 router.get('/me', authenticate, async (req, res, next) => {
   try {
     const user = await UserModel.findById(req.userId);
+    if (!user) {
+      throw new ValidationError('User not found', 404);
+    }
     res.json({
-      success: true,
-      data: UserModel.toJSON(user)
+      status: 'success',
+      user: UserModel.toJSON(user)
     });
   } catch (error) {
     next(error);
@@ -72,7 +77,7 @@ router.post('/change-password', authenticate, async (req, res, next) => {
     await AuthService.changePassword(req.userId, currentPassword, newPassword);
 
     res.json({
-      success: true,
+      status: 'success',
       message: 'Password changed successfully'
     });
   } catch (error) {
@@ -83,7 +88,7 @@ router.post('/change-password', authenticate, async (req, res, next) => {
 // POST /api/auth/logout (stateless - just client-side cleanup)
 router.post('/logout', (req, res) => {
   res.json({
-    success: true,
+    status: 'success',
     message: 'Logged out successfully'
   });
 });

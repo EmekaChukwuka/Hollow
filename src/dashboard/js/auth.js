@@ -84,17 +84,17 @@ if (loginForm) {
         loginBtn.textContent = '';
 
         try {
-            // ✅ Use relative path - utils.js will add the full URL
             const result = await api('POST', '/auth/login', { email, password });
 
-            if (result.success && result.data.token) {
-                setAuthToken(result.data.token);
+            // 🔥 FIX: Check for status === 'success' and token directly
+            if (result.status === 'success' && result.token) {
+                setAuthToken(result.token);
                 window.location.href = '../dashboard.html';
             } else {
-                loginError.textContent = 'Login failed. Please try again.';
+                loginError.textContent = result.message || 'Login failed. Please try again.';
             }
         } catch (error) {
-            if (error.message.includes('Invalid email or password')) {
+            if (error.message.includes('Invalid credentials') || error.message.includes('Invalid email or password')) {
                 loginError.textContent = 'Invalid email or password';
             } else {
                 loginError.textContent = error.message || 'Login failed. Please try again.';
@@ -161,18 +161,18 @@ if (signupForm) {
         signupBtn.textContent = '';
 
         try {
-            // ✅ Use relative path - utils.js will add the full URL
             const result = await api('POST', '/auth/signup', {
                 name: name || undefined,
                 email,
                 password
             });
 
-            if (result.success && result.data.token) {
-                setAuthToken(result.data.token);
+            // 🔥 FIX: Check for status === 'success' and token directly
+            if (result.status === 'success' && result.token) {
+                setAuthToken(result.token);
                 window.location.href = '../dashboard.html';
             } else {
-                signupError.textContent = 'Signup failed. Please try again.';
+                signupError.textContent = result.message || 'Signup failed. Please try again.';
             }
         } catch (error) {
             if (error.message.includes('already exists')) {

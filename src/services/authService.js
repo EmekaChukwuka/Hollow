@@ -1,11 +1,12 @@
 // src/services/authService.js
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import { UserModel } from '../models/User.js';
 import { env } from '../config/env.js';
 import { AppError, UnauthorizedError, ValidationError } from '../middleware/errorHandler.js';
 import { isValidEmail } from '../utils/validators.js';
 
+const JWT_SECRET = env.JWT_SECRET || 'your-secret-key';
 const SALT_ROUNDS = 10;
 
 export const AuthService = {
@@ -29,19 +30,17 @@ export const AuthService = {
 
     // Hash password
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-    console.log('✅ Password hash generated');
 
     // Create user
     const user = await UserModel.create({
       email,
       passwordHash,
-      name: name.trim()
+      name: name.trim(),
+      provider: 'email'
     });
 
-    console.log('✅ User created with ID:', user._id);
-
     // Generate token
-    const token = this.generateToken(user._id);
+    const token = this.generateToken(user.id || user._id);
 
     return {
       user: UserModel.toJSON(user),
@@ -49,7 +48,7 @@ export const AuthService = {
     };
   },
 
-  // Login a user
+  // Login a user (using the pattern from your working code)
   async login(email, password) {
     // Validate email
     if (!email || !isValidEmail(email)) {
@@ -59,17 +58,17 @@ export const AuthService = {
     // Find user
     const user = await UserModel.findByEmail(email);
     if (!user) {
-      throw new UnauthorizedError('Invalid email or password');
+      throw new UnauthorizedError('Invalid credentials');
     }
 
-    // Verify password
-    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    // Verify password using the UserModel's comparePassword method
+    const isMatch = await UserModel.comparePassword(email, password);
     if (!isMatch) {
-      throw new UnauthorizedError('Invalid email or password');
+      throw new UnauthorizedError('Invalid credentials');
     }
 
     // Generate token
-    const token = this.generateToken(user._id);
+    const token = this.generateToken(user.id || user._id);
 
     return {
       user: UserModel.toJSON(user),
@@ -80,17 +79,20 @@ export const AuthService = {
   // Generate JWT token
   generateToken(userId) {
     return jwt.sign(
-      { userId: userId.toString() },
-      env.JWT_SECRET,
-      { expiresIn: env.JWT_EXPIRY }
+      { 
+        id: userId.toString(),
+        email: null // Will be set in the route if needed
+      },
+      JWT_SECRET,
+      { expiresIn: env.JWT_EXPIRY || '7d' }
     );
   },
 
   // Verify JWT token
   verifyToken(token) {
     try {
-      const decoded = jwt.verify(token, env.JWT_SECRET);
-      return decoded.userId;
+      const decoded = jwt.verify(token, JWT_SECRET);
+      return decoded;
     } catch (error) {
       return null;
     }
@@ -98,12 +100,12 @@ export const AuthService = {
 
   // Get user from token
   async getUserFromToken(token) {
-    const userId = this.verifyToken(token);
-    if (!userId) {
+    const decoded = this.verifyToken(token);
+    if (!decoded) {
       return null;
     }
 
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(decoded.id);
     return user ? UserModel.toJSON(user) : null;
   },
 

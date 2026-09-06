@@ -1,3 +1,4 @@
+// src/config/env.js
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -28,7 +29,7 @@ if (missing.length > 0) {
 // Build config object with defaults
 export const env = {
   // Server
-  PORT: parseInt(process.env.PORT, 10),
+  PORT: parseInt(process.env.PORT, 10) || 3000,
   NODE_ENV: process.env.NODE_ENV || 'development',
   isProduction: process.env.NODE_ENV === 'production',
   isDevelopment: process.env.NODE_ENV === 'development',
