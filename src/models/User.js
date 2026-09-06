@@ -5,12 +5,13 @@ import { getDb } from '../config/database.js';
 const COLLECTION = 'users';
 
 export const UserModel = {
-  
+  // Get collection - THIS WAS MISSING
   getCollection() {
     const db = getDb();
     return db.collection(COLLECTION);
   },
 
+  // Create a new user
   async create(userData) {
     const collection = this.getCollection();
     const now = new Date();
@@ -87,7 +88,7 @@ export const UserModel = {
     return count > 0;
   },
 
-  // Remove sensitive data from user object
+  // Remove sensitive data from user object (for API responses)
   toJSON(user) {
     if (!user) return null;
     const { passwordHash, ...safeUser } = user;

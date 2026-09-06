@@ -11,22 +11,27 @@ const SALT_ROUNDS = 10;
 export const AuthService = {
   // Sign up a new user
   async signup(email, password, name = '') {
+    // Validate email
     if (!email || !isValidEmail(email)) {
       throw new ValidationError('Invalid email address');
     }
 
+    // Validate password
     if (!password || password.length < 6) {
       throw new ValidationError('Password must be at least 6 characters');
     }
 
+    // Check if user already exists
     const existing = await UserModel.findByEmail(email);
     if (existing) {
       throw new ValidationError('User with this email already exists');
     }
 
+    // Hash password
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-    console.log('✅ Password hash generated:', passwordHash.substring(0, 20) + '...');
+    console.log('✅ Password hash generated');
 
+    // Create user
     const user = await UserModel.create({
       email,
       passwordHash,
@@ -34,8 +39,8 @@ export const AuthService = {
     });
 
     console.log('✅ User created with ID:', user._id);
-    console.log('✅ User has passwordHash:', !!user.passwordHash);
 
+    // Generate token
     const token = this.generateToken(user._id);
 
     return {
@@ -46,31 +51,24 @@ export const AuthService = {
 
   // Login a user
   async login(email, password) {
+    // Validate email
     if (!email || !isValidEmail(email)) {
       throw new ValidationError('Invalid email address');
     }
 
+    // Find user
     const user = await UserModel.findByEmail(email);
-    console.log('🔍 User found:', !!user);
-    console.log('🔍 User has passwordHash:', user ? !!user.passwordHash : false);
-    console.log('🔍 User passwordHash value:', user ? user.passwordHash : 'undefined');
-
     if (!user) {
       throw new UnauthorizedError('Invalid email or password');
     }
 
-    if (!user.passwordHash) {
-      console.error('❌ User has no passwordHash!');
-      throw new UnauthorizedError('Invalid email or password');
-    }
-
+    // Verify password
     const isMatch = await bcrypt.compare(password, user.passwordHash);
-    console.log('🔍 Password match:', isMatch);
-
     if (!isMatch) {
       throw new UnauthorizedError('Invalid email or password');
     }
 
+    // Generate token
     const token = this.generateToken(user._id);
 
     return {

@@ -1,3 +1,4 @@
+// src/routes/authRoutes.js
 import { Router } from 'express';
 import { AuthService } from '../services/authService.js';
 import { authenticate } from '../middleware/auth.js';
