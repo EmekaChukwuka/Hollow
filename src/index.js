@@ -6,7 +6,6 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { env } from './config/env.js';
 import { connectToDatabase, createIndexes, getDb } from './config/database.js';
-import { constants } from './config/constants.js';
 
 // Route imports
 import { authRoutes } from './routes/authRoutes.js';
@@ -30,7 +29,7 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' }
 }));
 app.use(corsMiddleware);
-app.use(express.json({ limit: env.MAX_RESPONSE_SIZE }));
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
 
@@ -58,14 +57,13 @@ app.get('/', (req, res) => {
     name: 'Hollow',
     version: '0.1.0',
     status: 'running',
-    docs: 'https://hollow.dev/docs',
     dashboard: '/dashboard',
     health: '/health'
   });
 });
 
 // ============================================
-// 🔥 IMPORTANT: API Routes MUST come BEFORE publicRoutes
+// 🔥 API Routes MUST come BEFORE publicRoutes
 // ============================================
 
 // --- API Routes ---
@@ -83,18 +81,13 @@ app.use(errorHandler);
 // --- Start Server ---
 async function startServer() {
   try {
-    // Connect to database
     await connectToDatabase();
     const db = getDb();
-
-    // Create indexes
     await createIndexes();
 
-    // Start server
     app.listen(env.PORT, () => {
       console.log(`🚀 Hollow running on http://localhost:${env.PORT}`);
       console.log(`📡 Dashboard: http://localhost:${env.PORT}/dashboard`);
-      console.log(`🔗 Health: http://localhost:${env.PORT}/health`);
       console.log(`🌍 Environment: ${env.NODE_ENV}`);
     });
   } catch (error) {
@@ -103,15 +96,7 @@ async function startServer() {
   }
 }
 
-// Handle shutdown
-process.on('SIGTERM', async () => {
-  console.log('SIGTERM received, shutting down...');
-  process.exit(0);
-});
-
-process.on('SIGINT', async () => {
-  console.log('SIGINT received, shutting down...');
-  process.exit(0);
-});
+process.on('SIGTERM', () => process.exit(0));
+process.on('SIGINT', () => process.exit(0));
 
 startServer();

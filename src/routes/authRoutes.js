@@ -2,18 +2,20 @@
 import { Router } from 'express';
 import { AuthService } from '../services/authService.js';
 import { authenticate } from '../middleware/auth.js';
-import { ValidationError } from '../middleware/errorHandler.js';
 import { UserModel } from '../models/User.js';
 
 const router = Router();
 
 // POST /api/auth/signup
-router.post('/signup', async (req, res, next) => {
+router.post('/signup', async (req, res) => {
   try {
     const { email, password, name } = req.body;
 
     if (!email || !password) {
-      throw new ValidationError('Email and password are required');
+      return res.status(400).json({
+        status: 'error',
+        message: 'Email and password are required'
+      });
     }
 
     const result = await AuthService.signup(email, password, name);
@@ -24,17 +26,23 @@ router.post('/signup', async (req, res, next) => {
       user: result.user
     });
   } catch (error) {
-    next(error);
+    res.status(400).json({
+      status: 'error',
+      message: error.message
+    });
   }
 });
 
 // POST /api/auth/login
-router.post('/login', async (req, res, next) => {
+router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      throw new ValidationError('Email and password are required');
+      return res.status(400).json({
+        status: 'error',
+        message: 'Email and password are required'
+      });
     }
 
     const result = await AuthService.login(email, password);
@@ -45,47 +53,38 @@ router.post('/login', async (req, res, next) => {
       user: result.user
     });
   } catch (error) {
-    next(error);
+    res.status(401).json({
+      status: 'error',
+      message: error.message
+    });
   }
 });
 
-// GET /api/auth/me - Get current user
-router.get('/me', authenticate, async (req, res, next) => {
+// GET /api/auth/me
+router.get('/me', authenticate, async (req, res) => {
   try {
     const user = await UserModel.findById(req.userId);
+    
     if (!user) {
-      throw new ValidationError('User not found', 404);
+      return res.status(404).json({
+        status: 'error',
+        message: 'User not found'
+      });
     }
+
     res.json({
       status: 'success',
       user: UserModel.toJSON(user)
     });
   } catch (error) {
-    next(error);
-  }
-});
-
-// POST /api/auth/change-password
-router.post('/change-password', authenticate, async (req, res, next) => {
-  try {
-    const { currentPassword, newPassword } = req.body;
-
-    if (!currentPassword || !newPassword) {
-      throw new ValidationError('Current password and new password are required');
-    }
-
-    await AuthService.changePassword(req.userId, currentPassword, newPassword);
-
-    res.json({
-      status: 'success',
-      message: 'Password changed successfully'
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch user'
     });
-  } catch (error) {
-    next(error);
   }
 });
 
-// POST /api/auth/logout (stateless - just client-side cleanup)
+// POST /api/auth/logout
 router.post('/logout', (req, res) => {
   res.json({
     status: 'success',
