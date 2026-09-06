@@ -4,13 +4,6 @@ import { getDb } from '../config/database.js';
 const COLLECTION = 'users';
 
 export const UserModel = {
-  // Get collection
-  getCollection() {
-    const db = getDb();
-    return db.collection(COLLECTION);
-  },
-
-  // Create a new user
   async create(userData) {
     const collection = this.getCollection();
     const now = new Date();
@@ -23,8 +16,15 @@ export const UserModel = {
       updatedAt: now
     };
 
-    const result = await collection.insertOne(user);
-    return { ...user, _id: result.insertedId };
+    try {
+      const result = await collection.insertOne(user);
+      return { ...user, _id: result.insertedId };
+    } catch (error) {
+      if (error.code === 13 || error.message?.includes('not authorized')) {
+        throw new Error('Database is in read-only mode. Please check your MongoDB connection string.');
+      }
+      throw error;
+    }
   },
 
   // Find user by email

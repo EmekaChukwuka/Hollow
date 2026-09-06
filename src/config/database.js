@@ -1,8 +1,11 @@
+// src/config/database.js
+
 import { MongoClient } from 'mongodb';
 import { env } from './env.js';
 
 let client = null;
 let db = null;
+let isReadOnly = false;
 
 export async function connectToDatabase() {
   if (db && client) {
@@ -21,9 +24,19 @@ export async function connectToDatabase() {
     await client.connect();
     db = client.db();
 
-    console.log(`✅ MongoDB connected successfully`);
+    // Test write permission
+    try {
+      await db.collection('_test').insertOne({ test: true });
+      await db.collection('_test').deleteMany({ test: true });
+      isReadOnly = false;
+      console.log('✅ MongoDB connected with write permissions');
+    } catch (writeError) {
+      isReadOnly = true;
+      console.warn('⚠️ MongoDB is in read-only mode. Some features will not work.');
+    }
 
-    // Handle connection errors after initial connection
+    console.log(`✅ MongoDB connected (${isReadOnly ? 'read-only' : 'read-write'})`);
+
     client.on('error', (error) => {
       console.error('❌ MongoDB connection error:', error);
     });
@@ -53,6 +66,10 @@ export function getClient() {
   return client;
 }
 
+export function isDatabaseReadOnly() {
+  return isReadOnly;
+}
+
 export async function closeDatabase() {
   if (client) {
     await client.close();
@@ -62,7 +79,6 @@ export async function closeDatabase() {
   }
 }
 
-// Health check
 export async function checkDatabaseHealth() {
   try {
     if (!db) return false;
@@ -73,43 +89,47 @@ export async function checkDatabaseHealth() {
   }
 }
 
-// Create indexes
 export async function createIndexes() {
+  if (isReadOnly) {
+    console.warn('⚠️ Skipping index creation (read-only mode)');
+    return;
+  }
+
   const database = getDb();
 
-  // Users
-  await database.collection('users').createIndex(
-    { email: 1 },
-    { unique: true }
-  );
+  try {
+    await database.collection('users').createIndex(
+      { email: 1 },
+      { unique: true }
+    );
 
-  // Projects
-  await database.collection('projects').createIndex(
-    { userId: 1 }
-  );
-  await database.collection('projects').createIndex(
-    { projectId: 1 },
-    { unique: true }
-  );
-  await database.collection('projects').createIndex(
-    { apiKey: 1 },
-    { unique: true, sparse: true }
-  );
+    await database.collection('projects').createIndex(
+      { userId: 1 }
+    );
+    await database.collection('projects').createIndex(
+      { projectId: 1 },
+      { unique: true }
+    );
+    await database.collection('projects').createIndex(
+      { apiKey: 1 },
+      { unique: true, sparse: true }
+    );
 
-  // Endpoints
-  await database.collection('endpoints').createIndex(
-    { projectId: 1, method: 1, path: 1 },
-    { unique: true }
-  );
+    await database.collection('endpoints').createIndex(
+      { projectId: 1, method: 1, path: 1 },
+      { unique: true }
+    );
 
-  // Data
-  await database.collection('data').createIndex(
-    { projectId: 1, endpointId: 1 }
-  );
-  await database.collection('data').createIndex(
-    { projectId: 1, endpointId: 1, 'data.field': 1 },
-    { sparse: true }
-  );
+    await database.collection('data').createIndex(
+      { projectId: 1, endpointId: 1 }
+    );
+    await database.collection('data').createIndex(
+      { projectId: 1, endpointId: 1, 'data.field': 1 },
+      { sparse: true }
+    );
 
-  console.log('✅ Database indexes created');
+    console.log('✅ Database indexes created');
+  } catch (error) {
+    console.error('❌ Failed to create indexes:', error.message);
+  }
 }
