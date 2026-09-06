@@ -1,4 +1,5 @@
-import bcryptjs from 'bcryptjs';
+// src/services/authService.js
+import bcrypt from 'bcryptjs';  // ← Changed from bcryptjs to bcrypt (or use bcryptjs consistently)
 import jwt from 'jsonwebtoken';
 import { UserModel } from '../models/User.js';
 import { env } from '../config/env.js';
