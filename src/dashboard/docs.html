@@ -239,6 +239,19 @@
             color: #ffa500;
         }
 
+        .docs-content .code-block .url {
+            color: #00cc66;
+        }
+
+        .docs-content .code-block .method {
+            color: #0066ff;
+            font-weight: 600;
+        }
+
+        .docs-content .code-block .response {
+            color: #ffa500;
+        }
+
         .docs-content .note {
             background: rgba(0,102,255,0.06);
             border: 1px solid rgba(0,102,255,0.12);
@@ -253,10 +266,51 @@
             color: #fff;
         }
 
+        .docs-content .note a {
+            color: #0066ff;
+            text-decoration: none;
+        }
+
+        .docs-content .note a:hover {
+            text-decoration: underline;
+        }
+
         .docs-content hr {
             border: none;
             border-top: 1px solid rgba(255,255,255,0.06);
             margin: 40px 0;
+        }
+
+        .docs-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 24px;
+            font-size: 14px;
+        }
+
+        .docs-content table th {
+            text-align: left;
+            padding: 10px 14px;
+            color: #666;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .docs-content table td {
+            padding: 10px 14px;
+            color: #888;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .docs-content table tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .docs-content table td code {
+            font-size: 12px;
         }
 
         /* FOOTER */
@@ -361,6 +415,15 @@
                 padding: 6px 16px;
                 font-size: 13px;
             }
+
+            .docs-content table {
+                font-size: 12px;
+            }
+
+            .docs-content table th,
+            .docs-content table td {
+                padding: 6px 10px;
+            }
         }
     </style>
 </head>
@@ -388,28 +451,30 @@
         <aside class="docs-sidebar">
             <h4>Getting Started</h4>
             <a href="#" class="active">Introduction</a>
-            <a href="#">Quick Start</a>
-            <a href="#">Authentication</a>
+            <a href="#quick-start">Quick Start</a>
+            <a href="#authentication">Authentication</a>
 
             <h4 style="margin-top: 24px;">Endpoints</h4>
-            <a href="#">Creating Endpoints</a>
-            <a href="#">Static Mode</a>
-            <a href="#">Dynamic Mode</a>
-            <a href="#">Schema Validation</a>
+            <a href="#creating-endpoints">Creating Endpoints</a>
+            <a href="#static-mode">Static Mode</a>
+            <a href="#dynamic-mode">Dynamic Mode</a>
+            <a href="#schema-validation">Schema Validation</a>
 
             <h4 style="margin-top: 24px;">API Reference</h4>
-            <a href="#">Public API</a>
-            <a href="#">Dashboard API</a>
-            <a href="#">Data API</a>
+            <a href="#public-api">Public API</a>
+            <a href="#dashboard-api">Dashboard API</a>
+            <a href="#data-api">Data API</a>
 
             <h4 style="margin-top: 24px;">Guides</h4>
-            <a href="#">Using with React</a>
-            <a href="#">Using with Vue</a>
-            <a href="#">Using with cURL</a>
+            <a href="#react">Using with React</a>
+            <a href="#curl">Using with cURL</a>
+            <a href="#errors">Error Handling</a>
         </aside>
 
         <!-- Content -->
-        <div class="docs-content">
+        <div class="docs-content" id="introduction">
+
+            <!-- Introduction -->
             <h1>Introduction</h1>
             <p class="subtitle">Learn what Hollow is and how it can help you build apps faster.</p>
 
@@ -436,64 +501,591 @@
 
             <hr>
 
-            <h2>Quick Example</h2>
-            <p>Create a project, add a dynamic endpoint, and start using it in 5 minutes.</p>
+            <!-- Quick Start -->
+            <h2 id="quick-start">Quick Start</h2>
+            <p>Get your API running in 5 minutes with these 3 simple steps.</p>
 
+            <h3>Step 1: Create a Project</h3>
+            <p>Sign up and create a new project in the dashboard.</p>
             <div class="code-block">
-                <span class="comment">// 1. Create a project</span>
-                POST /api/projects
-                { "name": "My App" }
-
-                <span class="comment">// 2. Add an endpoint</span>
-                POST /api/projects/:id/endpoints
+                <span class="comment">// POST /api/projects</span>
                 {
-                  "method": "GET",
-                  "path": "/users",
-                  "mode": "dynamic",
-                  "schema": {
-                    "fields": {
-                      "name": { "type": "string", "required": true },
-                      "email": { "type": "email", "required": true }
+                  <span class="keyword">"name"</span>: <span class="string">"My App"</span>,
+                  <span class="keyword">"description"</span>: <span class="string">"My first API"</span>
+                }
+            </div>
+
+            <h3>Step 2: Add an Endpoint</h3>
+            <p>Define your endpoint and choose between <strong>Static</strong> or <strong>Dynamic</strong> mode.</p>
+            <div class="code-block">
+                <span class="comment">// POST /api/projects/:id/endpoints</span>
+                {
+                  <span class="keyword">"method"</span>: <span class="string">"GET"</span>,
+                  <span class="keyword">"path"</span>: <span class="string">"/users"</span>,
+                  <span class="keyword">"mode"</span>: <span class="string">"dynamic"</span>,
+                  <span class="keyword">"schema"</span>: {
+                    <span class="keyword">"fields"</span>: {
+                      <span class="keyword">"name"</span>: { <span class="keyword">"type"</span>: <span class="string">"string"</span>, <span class="keyword">"required"</span>: <span class="function">true</span> },
+                      <span class="keyword">"email"</span>: { <span class="keyword">"type"</span>: <span class="string">"email"</span>, <span class="keyword">"required"</span>: <span class="function">true</span> }
                     }
                   }
                 }
+            </div>
 
-                <span class="comment">// 3. Use it in your frontend</span>
-                fetch('https://hollow.dev/proj_abc/users')
-                  .then(res => res.json())
-                  .then(data => console.log(data));
+            <h3>Step 3: Use Your API</h3>
+            <p>Your API URL is: <code>https://hollow-3mbn.onrender.com/{projectId}/{path}</code></p>
+            <div class="code-block">
+                <span class="comment">// Using cURL</span>
+                <span class="method">curl</span> <span class="url">https://hollow-3mbn.onrender.com/proj_abc123/users</span>
+
+                <span class="comment">// Using JavaScript</span>
+                <span class="function">fetch</span>(<span class="string">'https://hollow-3mbn.onrender.com/proj_abc123/users'</span>)
+                  .<span class="function">then</span>(res => res.<span class="function">json</span>())
+                  .<span class="function">then</span>(data => <span class="function">console</span>.<span class="function">log</span>(data));
+            </div>
+
+            <div class="note">
+                <strong>🎉 Done!</strong> You now have a working API. Share the URL with your team or use it in your frontend app.
             </div>
 
             <hr>
 
-            <h2>Features at a Glance</h2>
+            <!-- Authentication -->
+            <h2 id="authentication">Authentication</h2>
+            <p>Hollow uses <strong>JWT (JSON Web Tokens)</strong> for authentication. All dashboard API requests require a valid token.</p>
 
-            <h3> Instant Setup</h3>
-            <p>Define endpoints in seconds. No configuration files, no Docker, no boilerplate.</p>
+            <h3>Getting a Token</h3>
+            <p>Sign up or log in to receive a token in the response.</p>
 
-            <h3> Full CRUD</h3>
-            <p>GET, POST, PUT, PATCH, DELETE. Store and retrieve data immediately.</p>
+            <div class="code-block">
+                <span class="comment">// POST /api/auth/login</span>
+                {
+                  <span class="keyword">"email"</span>: <span class="string">"you@example.com"</span>,
+                  <span class="keyword">"password"</span>: <span class="string">"your-password"</span>
+                }
 
-            <h3> Built-in Validation</h3>
-            <p>Define schemas and Hollow validates incoming data automatically.</p>
+                <span class="comment">// Response</span>
+                {
+                  <span class="keyword">"status"</span>: <span class="string">"success"</span>,
+                  <span class="keyword">"token"</span>: <span class="string">"eyJhbGciOiJIUzI1NiIs..."</span>,
+                  <span class="keyword">"user"</span>: {
+                    <span class="keyword">"id"</span>: <span class="string">"user_123"</span>,
+                    <span class="keyword">"email"</span>: <span class="string">"you@example.com"</span>,
+                    <span class="keyword">"name"</span>: <span class="string">"Your Name"</span>
+                  }
+                }
+            </div>
 
-            <h3> API Key Management</h3>
-            <p>Secure your endpoints with API keys. Toggle them on and off per project.</p>
+            <h3>Using the Token</h3>
+            <p>Include the token in the <code>Authorization</code> header for all dashboard API requests.</p>
+            <div class="code-block">
+                <span class="comment">// Example with cURL</span>
+                <span class="method">curl</span> <span class="url">https://hollow-3mbn.onrender.com/api/projects</span> \
+                  -H <span class="string">"Authorization: Bearer YOUR_TOKEN"</span>
 
-            <h3> Request Logs</h3>
-            <p>See every request to your API. Debug faster.</p>
+                <span class="comment">// Example with JavaScript</span>
+                <span class="function">fetch</span>(<span class="string">'https://hollow-3mbn.onrender.com/api/projects'</span>, {
+                  <span class="keyword">headers</span>: {
+                    <span class="string">'Authorization'</span>: <span class="string">`Bearer ${token}`</span>
+                  }
+                })
+            </div>
 
-            <h3> Multiple Scenarios</h3>
-            <p>Configure success, error, unauthorized, and other responses (static mode).</p>
+            <div class="note">
+                <strong>🔒 Important:</strong> Keep your token secure. Never share it publicly or commit it to version control.
+            </div>
 
             <hr>
 
+            <!-- Creating Endpoints -->
+            <h2 id="creating-endpoints">Creating Endpoints</h2>
+            <p>Endpoints define the API routes your frontend will call. Each endpoint has a method, path, and mode.</p>
+
+            <h3>Endpoint Structure</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>method</code></td>
+                        <td>string</td>
+                        <td>HTTP method: <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>path</code></td>
+                        <td>string</td>
+                        <td>URL path: <code>/users</code> or <code>/users/:id</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>mode</code></td>
+                        <td>string</td>
+                        <td><code>static</code> or <code>dynamic</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>responses</code></td>
+                        <td>array</td>
+                        <td>Static mode only: list of response scenarios</td>
+                    </tr>
+                    <tr>
+                        <td><code>schema</code></td>
+                        <td>object</td>
+                        <td>Dynamic mode only: field definitions</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr>
+
+            <!-- Static Mode -->
+            <h2 id="static-mode">Static Mode</h2>
+            <p>Static mode returns predefined responses. Great for mocking APIs, testing edge cases, and simulating different scenarios.</p>
+
+            <h3>Response Configuration</h3>
+            <p>Each static endpoint can have multiple response scenarios (success, error, unauthorized, etc.).</p>
+
+            <div class="code-block">
+                <span class="comment">// Example static endpoint configuration</span>
+                {
+                  <span class="keyword">"method"</span>: <span class="string">"GET"</span>,
+                  <span class="keyword">"path"</span>: <span class="string">"/users"</span>,
+                  <span class="keyword">"mode"</span>: <span class="string">"static"</span>,
+                  <span class="keyword">"responses"</span>: [
+                    {
+                      <span class="keyword">"scenario"</span>: <span class="string">"success"</span>,
+                      <span class="keyword">"isDefault"</span>: <span class="function">true</span>,
+                      <span class="keyword">"statusCode"</span>: <span class="string">200</span>,
+                      <span class="keyword">"body"</span>: { <span class="keyword">"users"</span>: [ { <span class="keyword">"id"</span>: <span class="string">1</span>, <span class="keyword">"name"</span>: <span class="string">"Alice"</span> } ] },
+                      <span class="keyword">"delayMs"</span>: <span class="string">0</span>
+                    },
+                    {
+                      <span class="keyword">"scenario"</span>: <span class="string">"error"</span>,
+                      <span class="keyword">"statusCode"</span>: <span class="string">500</span>,
+                      <span class="keyword">"body"</span>: { <span class="keyword">"error"</span>: <span class="string">"Server error"</span> },
+                      <span class="keyword">"delayMs"</span>: <span class="string">1000</span>
+                    }
+                  ]
+                }
+            </div>
+
+            <div class="note">
+                <strong>💡 Tip:</strong> Use the <code>_scenario</code> query parameter to test different responses:
+                <code>?scenario=error</code>
+            </div>
+
+            <hr>
+
+            <!-- Dynamic Mode -->
+            <h2 id="dynamic-mode">Dynamic Mode</h2>
+            <p>Dynamic mode provides full CRUD operations with data persistence. Perfect for building real backends without writing server code.</p>
+
+            <h3>How It Works</h3>
+            <ul>
+                <li><strong>GET /users</strong> — Returns all users</li>
+                <li><strong>POST /users</strong> — Creates a new user</li>
+                <li><strong>GET /users/:id</strong> — Returns a specific user</li>
+                <li><strong>PUT /users/:id</strong> — Updates a user</li>
+                <li><strong>DELETE /users/:id</strong> — Deletes a user</li>
+            </ul>
+
+            <div class="code-block">
+                <span class="comment">// Example dynamic endpoint</span>
+                <span class="comment">// POST /users</span>
+                <span class="method">POST</span> <span class="url">https://hollow-3mbn.onrender.com/proj_abc/users</span>
+                {
+                  <span class="keyword">"name"</span>: <span class="string">"Bob"</span>,
+                  <span class="keyword">"email"</span>: <span class="string">"bob@example.com"</span>
+                }
+
+                <span class="comment">// Response</span>
+                {
+                  <span class="keyword">"_id"</span>: <span class="string">"67b1c2d3e4f5..."</span>,
+                  <span class="keyword">"name"</span>: <span class="string">"Bob"</span>,
+                  <span class="keyword">"email"</span>: <span class="string">"bob@example.com"</span>,
+                  <span class="keyword">"_createdAt"</span>: <span class="string">"2024-01-01T12:00:00Z"</span>,
+                  <span class="keyword">"_updatedAt"</span>: <span class="string">"2024-01-01T12:00:00Z"</span>
+                }
+            </div>
+
+            <hr>
+
+            <!-- Schema Validation -->
+            <h2 id="schema-validation">Schema Validation</h2>
+            <p>Dynamic endpoints support schema validation to ensure data integrity.</p>
+
+            <h3>Field Types</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>string</code></td>
+                        <td>Text value</td>
+                        <td><code>"name": "Alice"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>number</code></td>
+                        <td>Numeric value</td>
+                        <td><code>"age": 25</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>boolean</code></td>
+                        <td>True or false</td>
+                        <td><code>"active": true</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>email</code></td>
+                        <td>Valid email format</td>
+                        <td><code>"email": "alice@example.com"</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>url</code></td>
+                        <td>Valid URL format</td>
+                        <td><code>"website": "https://example.com"</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+                <span class="comment">// Example schema definition</span>
+                {
+                  <span class="keyword">"fields"</span>: {
+                    <span class="keyword">"name"</span>: {
+                      <span class="keyword">"type"</span>: <span class="string">"string"</span>,
+                      <span class="keyword">"required"</span>: <span class="function">true</span>,
+                      <span class="keyword">"min"</span>: <span class="string">2</span>,
+                      <span class="keyword">"max"</span>: <span class="string">100</span>
+                    },
+                    <span class="keyword">"email"</span>: {
+                      <span class="keyword">"type"</span>: <span class="string">"email"</span>,
+                      <span class="keyword">"required"</span>: <span class="function">true</span>
+                    },
+                    <span class="keyword">"age"</span>: {
+                      <span class="keyword">"type"</span>: <span class="string">"number"</span>,
+                      <span class="keyword">"required"</span>: <span class="function">false</span>,
+                      <span class="keyword">"min"</span>: <span class="string">0</span>,
+                      <span class="keyword">"max"</span>: <span class="string">150</span>
+                    }
+                  }
+                }
+            </div>
+
+            <hr>
+
+            <!-- Public API -->
+            <h2 id="public-api">Public API</h2>
+            <p>The public API is what your frontend applications use. No authentication required unless you enable API keys.</p>
+
+            <h3>Base URL</h3>
+            <p><code>https://hollow-3mbn.onrender.com/{projectId}</code></p>
+
+            <h3>Endpoints</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Path</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>GET</code></td>
+                        <td><code>/{path}</code></td>
+                        <td>List all items (dynamic) or static response</td>
+                    </tr>
+                    <tr>
+                        <td><code>POST</code></td>
+                        <td><code>/{path}</code></td>
+                        <td>Create a new item (dynamic) or static response</td>
+                    </tr>
+                    <tr>
+                        <td><code>GET</code></td>
+                        <td><code>/{path}/:id</code></td>
+                        <td>Get a single item (dynamic)</td>
+                    </tr>
+                    <tr>
+                        <td><code>PUT</code></td>
+                        <td><code>/{path}/:id</code></td>
+                        <td>Update an item (dynamic)</td>
+                    </tr>
+                    <tr>
+                        <td><code>DELETE</code></td>
+                        <td><code>/{path}/:id</code></td>
+                        <td>Delete an item (dynamic)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+                <span class="comment">// Example public API calls</span>
+                <span class="method">GET</span>    <span class="url">https://hollow-3mbn.onrender.com/proj_abc/users</span>
+                <span class="method">POST</span>   <span class="url">https://hollow-3mbn.onrender.com/proj_abc/users</span>
+                <span class="method">GET</span>    <span class="url">https://hollow-3mbn.onrender.com/proj_abc/users/1</span>
+                <span class="method">PUT</span>    <span class="url">https://hollow-3mbn.onrender.com/proj_abc/users/1</span>
+                <span class="method">DELETE</span> <span class="url">https://hollow-3mbn.onrender.com/proj_abc/users/1</span>
+            </div>
+
+            <hr>
+
+            <!-- Dashboard API -->
+            <h2 id="dashboard-api">Dashboard API</h2>
+            <p>The dashboard API is used to manage projects and endpoints. All requests require authentication.</p>
+
+            <h3>Projects</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Path</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>POST</code></td>
+                        <td><code>/api/projects</code></td>
+                        <td>Create a project</td>
+                    </tr>
+                    <tr>
+                        <td><code>GET</code></td>
+                        <td><code>/api/projects</code></td>
+                        <td>List projects</td>
+                    </tr>
+                    <tr>
+                        <td><code>GET</code></td>
+                        <td><code>/api/projects/:id</code></td>
+                        <td>Get project details</td>
+                    </tr>
+                    <tr>
+                        <td><code>PUT</code></td>
+                        <td><code>/api/projects/:id</code></td>
+                        <td>Update project</td>
+                    </tr>
+                    <tr>
+                        <td><code>DELETE</code></td>
+                        <td><code>/api/projects/:id</code></td>
+                        <td>Delete project</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Endpoints</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Path</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>POST</code></td>
+                        <td><code>/api/projects/:pid/endpoints</code></td>
+                        <td>Create an endpoint</td>
+                    </tr>
+                    <tr>
+                        <td><code>GET</code></td>
+                        <td><code>/api/projects/:pid/endpoints</code></td>
+                        <td>List endpoints</td>
+                    </tr>
+                    <tr>
+                        <td><code>PUT</code></td>
+                        <td><code>/api/projects/:pid/endpoints/:eid</code></td>
+                        <td>Update endpoint</td>
+                    </tr>
+                    <tr>
+                        <td><code>DELETE</code></td>
+                        <td><code>/api/projects/:pid/endpoints/:eid</code></td>
+                        <td>Delete endpoint</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr>
+
+            <!-- Data API -->
+            <h2 id="data-api">Data API</h2>
+            <p>Manage stored data for dynamic endpoints.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Path</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>GET</code></td>
+                        <td><code>/api/projects/:pid/endpoints/:eid/data</code></td>
+                        <td>List all data</td>
+                    </tr>
+                    <tr>
+                        <td><code>GET</code></td>
+                        <td><code>/api/projects/:pid/endpoints/:eid/data/:itemId</code></td>
+                        <td>Get single item</td>
+                    </tr>
+                    <tr>
+                        <td><code>DELETE</code></td>
+                        <td><code>/api/projects/:pid/endpoints/:eid/data/:itemId</code></td>
+                        <td>Delete item</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr>
+
+            <!-- React Guide -->
+            <h2 id="react">Using with React</h2>
+            <p>Here's how to use Hollow in your React application.</p>
+
+            <div class="code-block">
+                <span class="comment">// Create a simple API client</span>
+                <span class="keyword">const</span> API_BASE = <span class="string">'https://hollow-3mbn.onrender.com/proj_abc'</span>;
+
+                <span class="keyword">export const</span> <span class="function">getUsers</span> = <span class="function">async</span> () => {
+                  <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="function">fetch</span>(<span class="string">`${API_BASE}/users`</span>);
+                  <span class="keyword">return</span> res.<span class="function">json</span>();
+                };
+
+                <span class="keyword">export const</span> <span class="function">createUser</span> = <span class="function">async</span> (data) => {
+                  <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="function">fetch</span>(<span class="string">`${API_BASE}/users`</span>, {
+                    <span class="keyword">method</span>: <span class="string">'POST'</span>,
+                    <span class="keyword">headers</span>: { <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span> },
+                    <span class="keyword">body</span>: <span class="function">JSON</span>.<span class="function">stringify</span>(data)
+                  });
+                  <span class="keyword">return</span> res.<span class="function">json</span>();
+                };
+
+                <span class="comment">// Use in a component</span>
+                <span class="keyword">function</span> <span class="function">UsersList</span>() {
+                  <span class="keyword">const</span> [users, setUsers] = <span class="function">useState</span>([]);
+
+                  <span class="function">useEffect</span>(() => {
+                    <span class="function">getUsers</span>().<span class="function">then</span>(setUsers);
+                  }, []);
+
+                  <span class="keyword">return</span> (
+                    <span class="function">&lt;div&gt;</span>
+                      {users.<span class="function">map</span>(user => (
+                        <span class="function">&lt;p</span> <span class="keyword">key</span>=<span class="string">{user._id}</span><span class="function">&gt;</span>{user.name}<span class="function">&lt;/p&gt;</span>
+                      ))}
+                    <span class="function">&lt;/div&gt;</span>
+                  );
+                }
+            </div>
+
+            <hr>
+
+            <!-- cURL Guide -->
+            <h2 id="curl">Using with cURL</h2>
+            <p>Test your API directly from the terminal using cURL.</p>
+
+            <div class="code-block">
+                <span class="comment"># GET all users</span>
+                <span class="method">curl</span> <span class="url">https://hollow-3mbn.onrender.com/proj_abc/users</span>
+
+                <span class="comment"># GET a single user</span>
+                <span class="method">curl</span> <span class="url">https://hollow-3mbn.onrender.com/proj_abc/users/1</span>
+
+                <span class="comment"># POST a new user</span>
+                <span class="method">curl</span> -X POST <span class="url">https://hollow-3mbn.onrender.com/proj_abc/users</span> \
+                  -H <span class="string">"Content-Type: application/json"</span> \
+                  -d <span class="string">'{"name": "Alice", "email": "alice@example.com"}'</span>
+
+                <span class="comment"># PUT update a user</span>
+                <span class="method">curl</span> -X PUT <span class="url">https://hollow-3mbn.onrender.com/proj_abc/users/1</span> \
+                  -H <span class="string">"Content-Type: application/json"</span> \
+                  -d <span class="string">'{"name": "Alice Updated"}'</span>
+
+                <span class="comment"># DELETE a user</span>
+                <span class="method">curl</span> -X DELETE <span class="url">https://hollow-3mbn.onrender.com/proj_abc/users/1</span>
+            </div>
+
+            <hr>
+
+            <!-- Error Handling -->
+            <h2 id="errors">Error Handling</h2>
+            <p>Hollow returns consistent error responses to help you debug issues.</p>
+
+            <h3>Error Response Format</h3>
+            <div class="code-block">
+                {
+                  <span class="keyword">"status"</span>: <span class="string">"error"</span>,
+                  <span class="keyword">"message"</span>: <span class="string">"Email already registered"</span>
+                }
+            </div>
+
+            <h3>Common HTTP Status Codes</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>200</code></td>
+                        <td>Success</td>
+                    </tr>
+                    <tr>
+                        <td><code>201</code></td>
+                        <td>Created</td>
+                    </tr>
+                    <tr>
+                        <td><code>204</code></td>
+                        <td>No Content (successful delete)</td>
+                    </tr>
+                    <tr>
+                        <td><code>400</code></td>
+                        <td>Bad Request (validation error)</td>
+                    </tr>
+                    <tr>
+                        <td><code>401</code></td>
+                        <td>Unauthorized (invalid credentials)</td>
+                    </tr>
+                    <tr>
+                        <td><code>404</code></td>
+                        <td>Not Found (project or endpoint not found)</td>
+                    </tr>
+                    <tr>
+                        <td><code>409</code></td>
+                        <td>Conflict (duplicate email, etc.)</td>
+                    </tr>
+                    <tr>
+                        <td><code>500</code></td>
+                        <td>Internal Server Error</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note">
+                <strong>🔍 Debug Tip:</strong> Check the <code>message</code> field for details about what went wrong.
+            </div>
+
+            <hr>
+
+            <!-- Next Steps -->
             <h2>Next Steps</h2>
             <ul>
-                <li><a href="#" style="color:#0066ff;">Quick Start Guide</a> — Create your first project in 5 minutes</li>
-                <li><a href="#" style="color:#0066ff;">Authentication</a> — Learn about API keys and securing your endpoints</li>
-                <li><a href="#" style="color:#0066ff;">Public API Reference</a> — Full API documentation</li>
+                <li>📋 <a href="/dashboard/signup.html" style="color:#0066ff;">Sign up</a> and create your first project</li>
+                <li>📖 <a href="#" style="color:#0066ff;">API Reference</a> — Full API documentation</li>
+                <li>💬 <a href="#" style="color:#0066ff;">Join the community</a> — Get help and share feedback</li>
             </ul>
+
         </div>
 
     </div>
