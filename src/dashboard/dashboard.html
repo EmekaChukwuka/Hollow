@@ -71,6 +71,7 @@
                     <h1 id="page-title">Projects</h1>
                 </div>
                 <div class="header-actions">
+                    <button class="btn-secondary" id="help-btn" style="padding:6px 12px;font-size:13px;">❓ Help</button>
                     <span class="user-email" id="user-email"></span>
                 </div>
             </header>
@@ -153,6 +154,54 @@
             <div class="modal-actions">
                 <button type="button" class="btn-secondary" id="confirm-cancel">Cancel</button>
                 <button type="button" class="btn-danger" id="confirm-confirm">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal" id="help-modal">
+        <div class="modal-content" style="max-width:600px;">
+            <h2>How to Use Hollow</h2>
+            
+            <div style="margin:20px 0;">
+                <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:#fff;">1. Create a Project</h3>
+                <p style="color:#888;font-size:14px;line-height:1.6;">Click "New Project" and give it a name.</p>
+            </div>
+
+            <div style="margin:20px 0;">
+                <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:#fff;">2. Add an Endpoint</h3>
+                <p style="color:#888;font-size:14px;line-height:1.6;">Click "New Endpoint" and configure:</p>
+                <ul style="color:#888;font-size:14px;line-height:1.8;padding-left:20px;">
+                    <li><strong>Method</strong> — GET, POST, PUT, DELETE</li>
+                    <li><strong>Path</strong> — e.g., <code style="background:#0a0a0a;padding:1px 6px;border-radius:4px;font-size:13px;color:#fff;">/users</code></li>
+                    <li><strong>Mode</strong> — Static (mock) or Dynamic (data storage)</li>
+                </ul>
+            </div>
+
+            <div style="margin:20px 0;">
+                <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:#fff;">3. Use Your API</h3>
+                <p style="color:#888;font-size:14px;line-height:1.6;">
+                    Your API URL is:
+                    <code style="display:block;background:#0a0a0a;padding:8px 12px;border-radius:6px;margin-top:4px;color:#0066ff;font-size:14px;word-break:break-all;">
+                        https://hollow-3mbn.onrender.com/{projectId}/{path}
+                    </code>
+                </p>
+                <p style="color:#888;font-size:14px;line-height:1.6;margin-top:8px;">
+                    Example with cURL:
+                    <code style="display:block;background:#0a0a0a;padding:8px 12px;border-radius:6px;margin-top:4px;color:#00cc66;font-size:13px;">
+                        curl https://hollow-3mbn.onrender.com/proj_abc123/users
+                    </code>
+                </p>
+            </div>
+
+            <div style="margin:20px 0;padding:16px;background:rgba(0,102,255,0.05);border-radius:8px;border:1px solid rgba(0,102,255,0.1);">
+                <p style="color:#888;font-size:14px;line-height:1.6;">
+                    💡 <strong style="color:#fff;">Tip:</strong> Share your API URL with your frontend team. They can start building immediately!
+                </p>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-primary" id="help-close-btn">Got it!</button>
             </div>
         </div>
     </div>

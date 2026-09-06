@@ -56,6 +56,10 @@ const confirmMessage = $('confirm-message');
 const confirmConfirm = $('confirm-confirm');
 const confirmCancel = $('confirm-cancel');
 
+const helpModal = $('help-modal');
+const helpBtn = $('help-btn');
+const helpCloseBtn = $('help-close-btn');
+
 // Toast
 const toastContainer = $('toast-container');
 
@@ -117,6 +121,21 @@ document.addEventListener('keydown', (e) => {
         });
     }
 });
+
+// ============================================
+// HELP MODAL
+// ============================================
+if (helpBtn) {
+    helpBtn.addEventListener('click', () => {
+        openModal(helpModal);
+    });
+}
+
+if (helpCloseBtn) {
+    helpCloseBtn.addEventListener('click', () => {
+        closeModal(helpModal);
+    });
+}
 
 // ============================================
 // NAVIGATION
@@ -199,11 +218,9 @@ if (projectForm) {
 
         try {
             if (state.editingProject) {
-                // ✅ FIXED: Use relative path
                 await api('PUT', `/projects/${state.editingProject}`, { name, description });
                 showToast('Project updated', 'success');
             } else {
-                // ✅ FIXED: Use relative path
                 const result = await api('POST', '/projects', { name, description });
                 state.projects.push(result.data);
                 showToast('Project created', 'success');
@@ -252,7 +269,6 @@ if (confirmConfirm) {
 // ============================================
 async function loadProjects() {
     try {
-        // ✅ FIXED: Use relative path
         const result = await api('GET', '/projects');
         state.projects = result.data || [];
         return state.projects;
@@ -318,7 +334,6 @@ function renderProjects() {
 
 async function createProject(name, description) {
     try {
-        // ✅ FIXED: Use relative path
         const result = await api('POST', '/projects', { name, description });
         state.projects.push(result.data);
         showToast('Project created successfully!', 'success');
@@ -332,7 +347,6 @@ async function createProject(name, description) {
 
 async function deleteProject(id) {
     try {
-        // ✅ FIXED: Use relative path
         await api('DELETE', `/projects/${id}`);
         state.projects = state.projects.filter(p => p._id !== id);
         showToast('Project deleted', 'success');
@@ -347,7 +361,6 @@ async function deleteProject(id) {
 // ============================================
 async function loadEndpoints(projectId) {
     try {
-        // ✅ FIXED: Use relative path
         const result = await api('GET', `/projects/${projectId}/endpoints`);
         state.endpoints = result.data || [];
         return state.endpoints;
@@ -359,7 +372,6 @@ async function loadEndpoints(projectId) {
 
 async function renderProjectDetail(projectId) {
     try {
-        // ✅ FIXED: Use relative path
         const result = await api('GET', `/projects/${projectId}`);
         state.currentProject = result.data;
 
@@ -367,7 +379,9 @@ async function renderProjectDetail(projectId) {
 
         const project = state.currentProject;
         const endpoints = state.endpoints;
+        const baseUrl = window.location.origin;
 
+        // Build endpoints HTML
         const endpointsHtml = endpoints.length ? endpoints.map(ep => `
             <div class="endpoint-item" data-id="${ep._id}">
                 <div class="endpoint-info">
@@ -381,12 +395,47 @@ async function renderProjectDetail(projectId) {
                     <button class="btn-danger btn-sm delete-endpoint">Delete</button>
                 </div>
             </div>
-        `).join('') : '<div class="empty-state" style="padding:20px;"><p>No endpoints yet. Create your first endpoint.</p></div>';
+        `).join('') : `
+            <div class="empty-state" style="padding:40px 20px;">
+                <p style="color:#666;font-size:14px;">No endpoints yet. Create your first endpoint to start using your API.</p>
+                <p style="color:#444;font-size:13px;margin-top:8px;">
+                    Example: <code style="background:#0a0a0a;padding:2px 8px;border-radius:4px;color:#00cc66;">GET /users</code>
+                </p>
+                <button class="btn-primary" id="add-endpoint-btn-empty" style="margin-top:12px;">+ New Endpoint</button>
+            </div>
+        `;
+
+        const fullApiUrl = `${baseUrl}/${project.projectId}`;
 
         projectDetailContent.innerHTML = `
             <div class="project-detail-header">
                 <div class="project-name">${project.name}</div>
                 <div class="project-description">${project.description || 'No description'}</div>
+            </div>
+
+            <!-- 🔥 Quick Start Section -->
+            <div style="background:rgba(0,102,255,0.05);border:1px solid rgba(0,102,255,0.1);border-radius:8px;padding:20px;margin-bottom:24px;">
+                <h4 style="font-size:13px;text-transform:uppercase;color:#0066ff;letter-spacing:0.5px;margin-bottom:8px;">🚀 Quick Start</h4>
+                <p style="color:#888;font-size:14px;margin-bottom:8px;">
+                    Your API is live at:
+                </p>
+                <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:#0a0a0a;padding:10px 14px;border-radius:6px;">
+                    <code style="color:#fff;font-size:15px;word-break:break-all;flex:1;">
+                        ${fullApiUrl}
+                    </code>
+                    <button class="copy-btn" onclick="window.copyToClipboard('${fullApiUrl}')" style="background:#0066ff;color:#fff;border:none;padding:4px 16px;border-radius:4px;cursor:pointer;font-weight:600;font-size:13px;font-family:'Inter',sans-serif;">
+                        Copy
+                    </button>
+                </div>
+                <p style="color:#666;font-size:13px;margin-top:8px;">
+                    Add your endpoint path, e.g. <code style="background:#0a0a0a;padding:2px 8px;border-radius:4px;color:#00cc66;">/users</code>
+                </p>
+                <div style="margin-top:10px;background:#0a0a0a;padding:10px 14px;border-radius:6px;overflow-x:auto;">
+                    <code style="color:#888;font-size:13px;">
+                        <span style="color:#444;"># Example with cURL</span><br>
+                        <span style="color:#00cc66;">curl</span> <span style="color:#fff;">${fullApiUrl}/users</span>
+                    </code>
+                </div>
             </div>
 
             <div class="project-info-cards">
@@ -397,11 +446,18 @@ async function renderProjectDetail(projectId) {
                         <button class="copy-btn" onclick="window.copyToClipboard('${project.projectId}')">Copy</button>
                     </div>
                 </div>
-                <div class="info-card">
-                    <div class="label">API URL</div>
-                    <div class="value">
-                        /${project.projectId}
-                        <button class="copy-btn" onclick="window.copyToClipboard('/${project.projectId}')">Copy</button>
+                <div class="info-card" style="grid-column:1/-1;background:rgba(0,102,255,0.03);border-color:rgba(0,102,255,0.1);">
+                    <div class="label">🔗 Your API URL</div>
+                    <div class="value" style="font-size:16px;display:flex;align-items:center;flex-wrap:wrap;gap:8px;">
+                        <code style="background:#0a0a0a;padding:6px 12px;border-radius:6px;color:#fff;font-size:15px;flex:1;word-break:break-all;">
+                            ${fullApiUrl}
+                        </code>
+                        <button class="copy-btn" onclick="window.copyToClipboard('${fullApiUrl}')" style="background:#0066ff;color:#fff;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-weight:600;font-family:'Inter',sans-serif;">
+                            Copy
+                        </button>
+                    </div>
+                    <div style="margin-top:8px;font-size:13px;color:#666;">
+                        Add your endpoint path, e.g. <code style="background:#0a0a0a;padding:2px 8px;border-radius:4px;color:#00cc66;">/users</code>
                     </div>
                 </div>
                 <div class="info-card">
@@ -438,13 +494,19 @@ async function renderProjectDetail(projectId) {
             });
         }
 
+        const addEndpointBtnEmpty = document.getElementById('add-endpoint-btn-empty');
+        if (addEndpointBtnEmpty) {
+            addEndpointBtnEmpty.addEventListener('click', () => {
+                navigateToEndpointEditor(projectId);
+            });
+        }
+
         const regenerateBtn = document.getElementById('regenerate-key-btn');
         if (regenerateBtn) {
             regenerateBtn.addEventListener('click', async () => {
                 if (!confirm('Regenerate API key? This will invalidate the current key.')) return;
                 try {
-                    // ✅ FIXED: Use relative path
-                    const result = await api('POST', `/projects/${projectId}/regenerate-key`);
+                    await api('POST', `/projects/${projectId}/regenerate-key`);
                     showToast('API key regenerated', 'success');
                     renderProjectDetail(projectId);
                 } catch (error) {
@@ -457,7 +519,6 @@ async function renderProjectDetail(projectId) {
         if (requireApiKeyCheckbox) {
             requireApiKeyCheckbox.addEventListener('change', async (e) => {
                 try {
-                    // ✅ FIXED: Use relative path
                     await api('PUT', `/projects/${projectId}`, { requireApiKey: e.target.checked });
                     showToast(`API key requirement ${e.target.checked ? 'enabled' : 'disabled'}`, 'success');
                 } catch (error) {
@@ -490,7 +551,6 @@ async function renderProjectDetail(projectId) {
 
 async function deleteEndpoint(projectId, endpointId) {
     try {
-        // ✅ FIXED: Use relative path
         await api('DELETE', `/projects/${projectId}/endpoints/${endpointId}`);
         showToast('Endpoint deleted', 'success');
         renderProjectDetail(projectId);
@@ -519,6 +579,9 @@ function renderEndpointEditor(projectId, endpointId = null) {
         <div class="form-group">
             <label for="editor-path">Path</label>
             <input type="text" id="editor-path" placeholder="/users" required>
+            <div style="font-size:12px;color:#444;margin-top:4px;">
+                Example: <code style="background:#0a0a0a;padding:1px 6px;border-radius:4px;color:#666;">/users</code> or <code style="background:#0a0a0a;padding:1px 6px;border-radius:4px;color:#666;">/users/:id</code>
+            </div>
         </div>
         <div class="form-group">
             <label for="editor-mode">Mode</label>
@@ -559,7 +622,6 @@ function renderEndpointEditor(projectId, endpointId = null) {
             if (methodSelect) methodSelect.value = endpoint.method;
             if (pathInput) pathInput.value = endpoint.path;
             if (modeSelect) modeSelect.value = endpoint.mode;
-            // Toggle fields based on mode
             toggleEditorFields(endpoint.mode);
         }
     }
@@ -598,14 +660,11 @@ function renderEndpointEditor(projectId, endpointId = null) {
                     data.schema = { fields: {} };
                 }
 
-                let result;
                 if (isEditing) {
-                    // ✅ FIXED: Use relative path
-                    result = await api('PUT', `/projects/${projectId}/endpoints/${endpointId}`, data);
+                    await api('PUT', `/projects/${projectId}/endpoints/${endpointId}`, data);
                     showToast('Endpoint updated', 'success');
                 } else {
-                    // ✅ FIXED: Use relative path
-                    result = await api('POST', `/projects/${projectId}/endpoints`, data);
+                    await api('POST', `/projects/${projectId}/endpoints`, data);
                     showToast('Endpoint created', 'success');
                 }
 
@@ -671,10 +730,10 @@ document.querySelectorAll('.nav-item[data-view]').forEach(item => {
             navigateToProjects();
         } else if (view === 'profile') {
             showView('profile');
-            // Load user data
-            // ✅ FIXED: Use relative path
             api('GET', '/auth/me').then(result => {
-                if (result.success) renderProfile(result.data);
+                if (result.status === 'success' && result.user) {
+                    renderProfile(result.user);
+                }
             }).catch(() => {
                 showToast('Failed to load profile', 'error');
             });
@@ -744,7 +803,6 @@ if (deleteProjectBtn) {
 if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
         try {
-            // ✅ FIXED: Use relative path
             await api('POST', '/auth/logout');
         } catch (_) {}
         removeAuthToken();
@@ -780,14 +838,12 @@ if (sidebarOverlay) {
     sidebarOverlay.addEventListener('click', closeSidebar);
 }
 
-// Close sidebar on escape key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         closeSidebar();
     }
 });
 
-// Close sidebar when a nav item is clicked (mobile)
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => {
         if (window.innerWidth <= 768) {
@@ -796,7 +852,6 @@ document.querySelectorAll('.nav-item').forEach(item => {
     });
 });
 
-// Close sidebar on window resize to desktop
 window.addEventListener('resize', () => {
     if (window.innerWidth > 768) {
         closeSidebar();
@@ -813,7 +868,6 @@ window.copyToClipboard = copyToClipboard;
 // ============================================
 async function initDashboard() {
     try {
-        // Check auth
         const token = getAuthToken();
         if (!token) {
             showToast('Please log in', 'error');
@@ -821,18 +875,13 @@ async function initDashboard() {
             return;
         }
 
-        // Get user
-        // ✅ FIXED: Use relative path
         const userResult = await api('GET', '/auth/me');
-        if (userResult.success) {
-            if (userEmail) userEmail.textContent = userResult.data.email;
-            renderProfile(userResult.data);
+        if (userResult.status === 'success' && userResult.user) {
+            if (userEmail) userEmail.textContent = userResult.user.email;
+            renderProfile(userResult.user);
         }
 
-        // Load projects
         await loadProjects();
-
-        // Show projects view
         navigateToProjects();
 
     } catch (error) {
@@ -845,7 +894,6 @@ async function initDashboard() {
     }
 }
 
-// Start dashboard
 initDashboard();
 
 console.log('📊 Hollow dashboard ready');
